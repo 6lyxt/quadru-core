@@ -29,17 +29,14 @@ public class PlayerRepository {
      * @param p player
      * @return dbplayer
      */
-    public DBPlayer fetchPlayer(Player p) {
+    public boolean playerExists(Player p) {
         String sql = "SELECT * FROM players WHERE uuid = ?;";
         try (Connection connection = DBConnector.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, p.getUniqueId().toString());
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new PlayerDB(
-                            UUID.fromString(rs.getString("uuid")),
-                            rs.getString("nick")
-                    );
+                    return true;
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -47,6 +44,36 @@ public class PlayerRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return false;
+    }
+
+    public void setPlayerIsland(Player p, String islandName) {
+        UUID playerUUID = p.getUniqueId();
+        String sql = "UPDATE players SET islandName = ? WHERE uuid = ?;";
+        try (Connection connection = DBConnector.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, islandName.toLowerCase());
+            ps.setString(2, playerUUID.toString());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String fetchPlayerIsland(Player p) {
+        String sql = "SELECT islandName FROM players WHERE uuid = ?;";
+        try (Connection connection = DBConnector.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, p.getUniqueId().toString());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("islandName").toUpperCase();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "OBDACHLOS";
     }
 }

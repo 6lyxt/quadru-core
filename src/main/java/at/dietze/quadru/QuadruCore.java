@@ -1,14 +1,8 @@
 package at.dietze.quadru;
 
-import at.dietze.quadru.commands.InvseeCommand;
-import at.dietze.quadru.commands.SetNickCommand;
-import at.dietze.quadru.commands.SitCommand;
+import at.dietze.quadru.commands.*;
 import at.dietze.quadru.constants.IStrings;
-import at.dietze.quadru.events.OnPlayerChatEvent;
-import at.dietze.quadru.events.OnPlayerJoinEvent;
-import at.dietze.quadru.events.OnPlayerSneakEvent;
-import at.dietze.quadru.events.OnPlayerRightClickEvent;
-import at.dietze.quadru.events.OnPlayerConsumeEvent;
+import at.dietze.quadru.events.*;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
@@ -28,7 +22,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import at.dietze.quadru.commands.GiveDyeCommand;
+
 import at.dietze.quadru.recipes.CustomRecipes;
 
 public final class QuadruCore extends JavaPlugin {
@@ -58,9 +52,7 @@ public final class QuadruCore extends JavaPlugin {
     }
 
     @Override
-    public void onDisable() {
-
-    }
+    public void onDisable() {}
 
     /**
      * @param action calling command, for example /help
@@ -79,7 +71,7 @@ public final class QuadruCore extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new OnPlayerJoinEvent(), this);
         Bukkit.getPluginManager().registerEvents(new OnPlayerSneakEvent(), this);
         Bukkit.getPluginManager().registerEvents(new OnPlayerRightClickEvent(), this);
-        // Register consumption listener for custom dried kelp joint
+        Bukkit.getPluginManager().registerEvents(new PlayerSitOnStairs(), this);
         Bukkit.getPluginManager().registerEvents(new OnPlayerConsumeEvent(), this);
 
         Bukkit.getConsoleSender().sendMessage(IStrings.prefix + "§a Events wurden registriert.");
@@ -93,6 +85,7 @@ public final class QuadruCore extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("setnick")).setExecutor(new SetNickCommand());
         Objects.requireNonNull(this.getCommand("sit")).setExecutor(new SitCommand());
         Objects.requireNonNull(this.getCommand("invsee")).setExecutor(new InvseeCommand());
+        Objects.requireNonNull(this.getCommand("setisland")).setExecutor(new SetIslandCommand());
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             GiveDyeCommand.register(commands);
         });
