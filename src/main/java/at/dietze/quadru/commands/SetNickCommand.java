@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class SetNickCommand implements ICommand, IStrings, CommandExecutor {
     @Override
     public String getAction() {
-        return "setNick";
+        return "setnick";
     }
 
     @Override

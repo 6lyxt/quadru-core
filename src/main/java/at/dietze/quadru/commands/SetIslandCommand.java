@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class SetIslandCommand implements ICommand, CommandExecutor, IStrings {
     @Override
     public String getAction() {
-        return "setIsland";
+        return "setisland";
     }
 
     @Override
