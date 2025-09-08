@@ -33,6 +33,7 @@ public class SetNickCommand implements ICommand, IStrings, CommandExecutor {
 
                 PlayerNameFormatter.format(newNick, islandName);
                 p.setDisplayName(newNick);
+                p.setCustomName(newNick);
 
                 p.sendMessage(prefix + "§aDein Nickname wurde zu §e" + newNick + " §ageändert.");
             } else {

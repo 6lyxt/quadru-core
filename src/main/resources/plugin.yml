@@ -2,3 +2,19 @@ name: QuadruCore
 version: '1.0-SNAPSHOT'
 main: at.dietze.quadru.QuadruCore
 api-version: '1.21'
+commands:
+  help:
+    description: Shows help information
+    usage: /<command>
+  setNick:
+    description: Sets your nickname
+    usage: /<command> <nickname>
+  sit:
+    description: Makes you sit down
+    usage: /<command>
+  invsee:
+    description: Toggles your invisibility
+    usage: /<command>
+  setIsland:
+    description: Sets your island location
+    usage: /<command> <location>

@@ -15,7 +15,7 @@ public class PlayerRepository {
      * @param p player
      */
     public void upsertPlayer(Player p) {
-        String sql = "INSERT INTO players (uuid) VALUES (?) ON CONFLICT (uuid) DO NOTHING;";
+        String sql = "INSERT IGNORE INTO players (uuid) VALUES (?);";
         try (Connection connection = DBConnector.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, p.getUniqueId().toString());
@@ -49,7 +49,7 @@ public class PlayerRepository {
 
     public void setPlayerIsland(Player p, String islandName) {
         UUID playerUUID = p.getUniqueId();
-        String sql = "UPDATE players SET islandName = ? WHERE uuid = ?;";
+        String sql = "UPDATE players SET island = ? WHERE uuid = ?;";
         try (Connection connection = DBConnector.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, islandName.toLowerCase());
@@ -61,13 +61,13 @@ public class PlayerRepository {
     }
 
     public String fetchPlayerIsland(Player p) {
-        String sql = "SELECT islandName FROM players WHERE uuid = ?;";
+        String sql = "SELECT island FROM players WHERE uuid = ?;";
         try (Connection connection = DBConnector.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, p.getUniqueId().toString());
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getString("islandName").toUpperCase();
+                    return rs.getString("island").toUpperCase();
                 }
             }
         } catch (SQLException e) {

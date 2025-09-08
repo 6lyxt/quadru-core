@@ -1,5 +1,6 @@
 package at.dietze.quadru.db;
 
+import at.dietze.quadru.QuadruCore;
 import io.github.cdimascio.dotenv.Dotenv;
 
 import java.sql.*;
@@ -11,10 +12,10 @@ public class DBConnector {
     private final String dbPass;
 
     private DBConnector() {
-        Dotenv dotenv = Dotenv.load();
-        this.dbUrl = dotenv.get("DB_URL");
-        this.dbUser = dotenv.get("DB_USER");
-        this.dbPass = dotenv.get("DB_PASSWORD");
+
+        this.dbUrl = QuadruCore.getPlugin().getConfig().getString("DB_URL");
+        this.dbUser = QuadruCore.getPlugin().getConfig().getString("DB_USER");
+        this.dbPass = QuadruCore.getPlugin().getConfig().getString("DB_PASSWORD");
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {

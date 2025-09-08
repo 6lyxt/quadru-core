@@ -15,7 +15,7 @@ public class NickRepository {
      * @param nick Nickname
      */
     public void upsertNick(Player p, String nick) {
-        String sql = "INSERT INTO players (uuid, nick) VALUES (?, ?) ON CONFLICT (uuid) DO UPDATE SET nick = EXCLUDED.nick;";
+        String sql = "INSERT INTO players (uuid, nick) VALUES (?, ?) ON DUPLICATE KEY UPDATE nick = VALUES(nick);";
         try (Connection connection = DBConnector.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, p.getUniqueId().toString());
