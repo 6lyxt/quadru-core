@@ -2,7 +2,6 @@ package at.dietze.quadru.commands;
 
 import at.dietze.quadru.constants.ICommand;
 import at.dietze.quadru.constants.IStrings;
-import at.dietze.quadru.factories.PlayerRepository;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,12 +11,12 @@ import org.jetbrains.annotations.NotNull;
 public class SetIslandCommand implements ICommand, CommandExecutor, IStrings {
     @Override
     public String getAction() {
-        return "setIsland";
+        return "setisland";
     }
 
     @Override
     public String getDescription() {
-        return "Setzt die Insel eines Spielers.";
+        return "Informiert über die Verwendung von Permissions für Inseln.";
     }
 
     @Override
@@ -30,16 +29,17 @@ public class SetIslandCommand implements ICommand, CommandExecutor, IStrings {
                     String targetPlayerName = strings[0];
                     String islandName = strings[1];
                     if(islandName.equalsIgnoreCase("Pyroka") || islandName.equalsIgnoreCase("Aloria")) {
-                        PlayerRepository playerRepository = new PlayerRepository();
-                        playerRepository.setPlayerIsland(p, islandName);
-
-                        p.sendMessage(prefix + "§aDie Insel von §e" + targetPlayerName + " §awurde zu §e" + islandName + " §ageändert.");
+                        p.sendMessage(prefix + "§eUm die Insel von §a" + targetPlayerName + " §eauf §a" + islandName + " §ezu setzen:");
+                        p.sendMessage(prefix + "§7Verwende dein Permissions-Plugin und gib die Berechtigung:");
+                        p.sendMessage(prefix + "§aquadru.island." + islandName.toLowerCase());
+                        p.sendMessage(prefix + "§7Entferne ggf. andere Insel-Berechtigungen (pyroka/aloria).");
                     } else {
                         p.sendMessage(prefix + "§cDie Insel muss entweder 'Pyroka' oder 'Aloria' sein.");
                         return false;
                     }
                 } else {
                     p.sendMessage(prefix + "§cCommandstruktur: /setIsland <Spielername> <Pyroka|Aloria>");
+                    p.sendMessage(prefix + "§7Hinweis: Dieser Befehl zeigt jetzt nur die benötigten Permissions an.");
                 }
             } else {
                 p.sendMessage(prefix + "§cDu hast keine Rechte, um diesen Befehl auszuführen.");

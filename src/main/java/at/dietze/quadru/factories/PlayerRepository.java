@@ -1,13 +1,7 @@
 package at.dietze.quadru.factories;
 
-import at.dietze.quadru.db.DBConnector;
+import at.dietze.quadru.constants.IStrings;
 import org.bukkit.entity.Player;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.UUID;
 
 public class PlayerRepository {
 
@@ -15,65 +9,41 @@ public class PlayerRepository {
      * @param p player
      */
     public void upsertPlayer(Player p) {
-        String sql = "INSERT IGNORE INTO players (uuid) VALUES (?);";
-        try (Connection connection = DBConnector.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, p.getUniqueId().toString());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        // No longer needed with PDC storage
+        // Players are automatically "registered" when they first join
     }
 
     /**
      * @param p player
-     * @return dbplayer
+     * @return true (all players exist now)
      */
     public boolean playerExists(Player p) {
-        String sql = "SELECT * FROM players WHERE uuid = ?;";
-        try (Connection connection = DBConnector.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, p.getUniqueId().toString());
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return true;
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
+        // With PDC storage, all players "exist" 
+        return true;
     }
 
+    /**
+     * Sets player island by informing admin to use permission plugin
+     * @param p player (admin executing command)
+     * @param islandName island name
+     */
     public void setPlayerIsland(Player p, String islandName) {
-        UUID playerUUID = p.getUniqueId();
-        String sql = "UPDATE players SET island = ? WHERE uuid = ?;";
-        try (Connection connection = DBConnector.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, islandName.toLowerCase());
-            ps.setString(2, playerUUID.toString());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        // Since we now use permission groups, inform admin to use permission plugin
+        p.sendMessage(IStrings.prefix + "§eHinweis: Verwende dein Permissions-Plugin, um die Berechtigung §aquadru.island." + islandName.toLowerCase() + " §ezu setzen.");
     }
 
+    /**
+     * Gets player island from permission groups
+     * @param p player
+     * @return island name
+     */
     public String fetchPlayerIsland(Player p) {
-        String sql = "SELECT island FROM players WHERE uuid = ?;";
-        try (Connection connection = DBConnector.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, p.getUniqueId().toString());
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getString("island");
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (p.hasPermission("quadru.island.pyroka")) {
+            return "pyroka";
+        } else if (p.hasPermission("quadru.island.aloria")) {
+            return "aloria";
         }
-
+        
         return "OBDACHLOS";
     }
 }

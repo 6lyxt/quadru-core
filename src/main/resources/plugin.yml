@@ -6,7 +6,7 @@ commands:
   help:
     description: Shows help information
     usage: /<command>
-  setNick:
+  setnick:
     description: Sets your nickname
     usage: /<command> <nickname>
   sit:
@@ -15,6 +15,6 @@ commands:
   invsee:
     description: Toggles your invisibility
     usage: /<command>
-  setIsland:
+  setisland:
     description: Sets your island location
     usage: /<command> <location>
