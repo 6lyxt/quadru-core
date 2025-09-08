@@ -34,6 +34,6 @@ public class HelpCommand implements ICommand, IStrings, CommandExecutor {
             QuadruCore.getDescriptions().forEach(p::sendMessage);
         }
 
-        return false;
+        return true;
     }
 }

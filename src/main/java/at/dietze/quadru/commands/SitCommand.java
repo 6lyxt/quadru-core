@@ -37,7 +37,7 @@ public class SitCommand implements ICommand, CommandExecutor, IStrings {
             this.spawnHelperEntity(p);
         }
 
-        return false;
+        return true;
     }
 
     /**

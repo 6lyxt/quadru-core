@@ -41,6 +41,6 @@ public class SetNickCommand implements ICommand, IStrings, CommandExecutor {
             }
         }
 
-        return false;
+        return true;
     }
 }

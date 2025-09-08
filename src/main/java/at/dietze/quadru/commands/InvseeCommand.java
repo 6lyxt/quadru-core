@@ -47,6 +47,6 @@ public class InvseeCommand implements ICommand, CommandExecutor, IStrings {
             }
         }
 
-        return false;
+        return true;
     }
 }

@@ -48,6 +48,6 @@ public class SetIslandCommand implements ICommand, CommandExecutor, IStrings {
             }
         }
 
-        return false;
+        return true;
     }
 }
