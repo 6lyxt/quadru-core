@@ -67,7 +67,7 @@ public class PlayerRepository {
             ps.setString(1, p.getUniqueId().toString());
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getString("island").toUpperCase();
+                    return rs.getString("island");
                 }
             }
         } catch (SQLException e) {

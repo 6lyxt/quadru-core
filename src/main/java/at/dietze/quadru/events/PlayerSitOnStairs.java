@@ -27,7 +27,7 @@ public class PlayerSitOnStairs implements Listener {
         Stairs stairs = (Stairs) blockData;
         if (stairs.getShape() != Stairs.Shape.STRAIGHT) return;
 
-        Entity arrow = p.getWorld().spawnEntity(block.getLocation().subtract(0D, 0.4D, 0D), EntityType.ARROW);
+        Entity arrow = p.getWorld().spawnEntity(block.getLocation().add(0.5D, 0.00, 0.00), EntityType.ARROW);
         arrow.setGravity(false);
         arrow.addPassenger(p);
     }

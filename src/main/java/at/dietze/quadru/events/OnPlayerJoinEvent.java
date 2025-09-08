@@ -6,10 +6,14 @@ import at.dietze.quadru.factories.PlayerNameFormatter;
 import at.dietze.quadru.factories.PlayerRepository;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.scoreboard.NameTagVisibility;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import java.util.Objects;
 
@@ -23,20 +27,33 @@ public class OnPlayerJoinEvent implements Listener {
         Player p = e.getPlayer();
 
         PlayerRepository playerRepository = new PlayerRepository();
-        if(!playerRepository.playerExists(p)) {
+        if (!playerRepository.playerExists(p)) {
             e.setJoinMessage(IStrings.prefix + "§a" + Objects.requireNonNull(p.getPlayer()).getName() + " wacht auf der Paravasa auf...");
             playerRepository.upsertPlayer(p);
         } else {
-            e.setJoinMessage(IStrings.prefix + "§a" + Objects.requireNonNull(p.getPlayer()).getName() + " betritt Quadru.");
             NickRepository nickRepository = new NickRepository();
             String nick = nickRepository.fetchNick(p);
-            if(nick == null) {
+            if (nick == null) {
                 p.sendMessage(IStrings.prefix + "§cDu hast noch keinen Nickname gesetzt. Nutze §e/nick <Nickname>§c um einen zu setzen.");
+                e.setJoinMessage(IStrings.prefix + "§a" + Objects.requireNonNull(p.getPlayer()).getName() + " betritt Quadru.");
             } else {
                 String islandName = playerRepository.fetchPlayerIsland(p);
-                PlayerNameFormatter.format(nick, islandName);
+                nick = PlayerNameFormatter.format(nick, islandName);
+
+                Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+                String teamName = p.getUniqueId().toString().substring(0, 16);
+                Team team = scoreboard.getTeam(teamName);
+                if (team == null) {
+                    team = scoreboard.registerNewTeam(teamName);
+                }
+                team.setPrefix(nick + " [");
+                team.setSuffix("]");
+                team.addEntry(p.getName());
+
+                p.setPlayerListName(nick);
                 p.setDisplayName(nick);
                 p.setCustomName(nick);
+                e.setJoinMessage(IStrings.prefix + "§a" + Objects.requireNonNull(p.getPlayer()).getCustomName() + "§a betritt Quadru.");
             }
         }
 

@@ -7,6 +7,15 @@ public class PlayerNameFormatter {
             islandName = "OBDACHLOS";
         }
 
-        return "§8(§7" + islandName + "§8)" + " §r" + playerName + "§r";
+        switch (islandName) {
+            case "aloria":
+                islandName = "§9ALORIA";
+                break;
+            case "pyroka":
+                islandName = "§6PYROKA";
+                break;
+        }
+
+        return "§8(§7" + islandName + "§8)" + " §7" + playerName + "§r";
     }
 }

@@ -38,8 +38,6 @@ public class SetIslandCommand implements ICommand, CommandExecutor, IStrings {
                         p.sendMessage(prefix + "§cDie Insel muss entweder 'Pyroka' oder 'Aloria' sein.");
                         return false;
                     }
-
-                    p.sendMessage(prefix + "§aDie Insel von §e" + targetPlayerName + " §awurde zu §e" + islandName + " §ageändert.");
                 } else {
                     p.sendMessage(prefix + "§cCommandstruktur: /setIsland <Spielername> <Pyroka|Aloria>");
                 }

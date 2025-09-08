@@ -73,6 +73,8 @@ public final class QuadruCore extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new OnPlayerRightClickEvent(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerSitOnStairs(), this);
         Bukkit.getPluginManager().registerEvents(new OnPlayerConsumeEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new OnPlayerQuitEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new OnPlayerDeathEvent(), this);
 
         Bukkit.getConsoleSender().sendMessage(IStrings.prefix + "§a Events wurden registriert.");
     }
