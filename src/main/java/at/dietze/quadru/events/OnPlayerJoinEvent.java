@@ -26,38 +26,33 @@ public class OnPlayerJoinEvent implements Listener {
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
 
-        PlayerRepository playerRepository = new PlayerRepository();
-        if (!playerRepository.playerExists(p)) {
-            e.setJoinMessage(IStrings.prefix + "§a" + Objects.requireNonNull(p.getPlayer()).getName() + " wacht auf der Paravasa auf...");
-            playerRepository.upsertPlayer(p);
+        NickRepository nickRepository = new NickRepository();
+        String nick = nickRepository.fetchNick(p);
+        
+        if (nick == null) {
+            p.sendMessage(IStrings.prefix + "§cDu hast noch keinen Nickname gesetzt. Nutze §e/setnick <Nickname>§c um einen zu setzen.");
+            e.setJoinMessage(IStrings.prefix + "§a" + Objects.requireNonNull(p.getPlayer()).getName() + " betritt Quadru.");
         } else {
-            NickRepository nickRepository = new NickRepository();
-            String nick = nickRepository.fetchNick(p);
-            if (nick == null) {
-                p.sendMessage(IStrings.prefix + "§cDu hast noch keinen Nickname gesetzt. Nutze §e/nick <Nickname>§c um einen zu setzen.");
-                e.setJoinMessage(IStrings.prefix + "§a" + Objects.requireNonNull(p.getPlayer()).getName() + " betritt Quadru.");
-            } else {
-                String islandName = playerRepository.fetchPlayerIsland(p);
-                nick = PlayerNameFormatter.format(nick, islandName);
+            PlayerRepository playerRepository = new PlayerRepository();
+            String islandName = playerRepository.fetchPlayerIsland(p);
+            nick = PlayerNameFormatter.format(nick, islandName);
 
-                Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-                String teamName = p.getUniqueId().toString().substring(0, 16);
-                Team team = scoreboard.getTeam(teamName);
-                if (team == null) {
-                    team = scoreboard.registerNewTeam(teamName);
-                }
-                team.setPrefix(nick + " [");
-                team.setSuffix("]");
-                team.addEntry(p.getName());
-
-                p.setPlayerListName(nick);
-                p.setDisplayName(nick);
-                p.setCustomName(nick);
-                e.setJoinMessage(IStrings.prefix + "§a" + Objects.requireNonNull(p.getPlayer()).getCustomName() + "§a betritt Quadru.");
+            Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+            String teamName = p.getUniqueId().toString().substring(0, 16);
+            Team team = scoreboard.getTeam(teamName);
+            if (team == null) {
+                team = scoreboard.registerNewTeam(teamName);
             }
+            team.setPrefix(nick + " [");
+            team.setSuffix("]");
+            team.addEntry(p.getName());
+
+            p.setPlayerListName(nick);
+            p.setDisplayName(nick);
+            p.setCustomName(nick);
+            e.setJoinMessage(IStrings.prefix + "§a" + Objects.requireNonNull(p.getPlayer()).getCustomName() + "§a betritt Quadru.");
         }
 
         p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(IStrings.prefix + "§aWillkommen auf Quadru!"));
-
     }
 }
