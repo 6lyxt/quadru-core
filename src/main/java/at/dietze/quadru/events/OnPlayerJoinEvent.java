@@ -36,6 +36,7 @@ public class OnPlayerJoinEvent implements Listener {
                 String islandName = playerRepository.fetchPlayerIsland(p);
                 PlayerNameFormatter.format(nick, islandName);
                 p.setDisplayName(nick);
+                p.setCustomName(nick);
             }
         }
 

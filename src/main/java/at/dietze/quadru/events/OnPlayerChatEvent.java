@@ -18,7 +18,7 @@ public class OnPlayerChatEvent implements Listener, IStrings {
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent e) {
         String rawMsg = e.getMessage();
-        String msg = prefix + "§7[privat] <§a" + e.getPlayer().getDisplayName() + "§7> " + rawMsg;
+        String msg = prefix + "§7[privat] <§a" + e.getPlayer().getCustomName() + "§7> " + rawMsg;
 
         int dst = 100;
 
@@ -29,8 +29,8 @@ public class OnPlayerChatEvent implements Listener, IStrings {
                 pl.sendMessage(msg);
                 Bukkit.getConsoleSender().sendMessage(msg);
             } else if(rawMsg.toLowerCase().startsWith("@all")) {
-                Bukkit.getConsoleSender().sendMessage(prefix + "§7[alle] <§a" + e.getPlayer().getDisplayName() + "§7>" + rawMsg.replace("@all", ""));
-                Bukkit.broadcastMessage(prefix + "§7[alle] <§a" + e.getPlayer().getDisplayName() + "§7>" + rawMsg.replace("@all", ""));
+                Bukkit.getConsoleSender().sendMessage(prefix + "§7[alle] <§a" + e.getPlayer().getCustomName() + "§7>" + rawMsg.replace("@all", ""));
+                Bukkit.broadcastMessage(prefix + "§7[alle] <§a" + e.getPlayer().getCustomName() + "§7>" + rawMsg.replace("@all", ""));
                 break;
             }
         }
