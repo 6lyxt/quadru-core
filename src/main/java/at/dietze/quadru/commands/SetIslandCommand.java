@@ -3,6 +3,7 @@ package at.dietze.quadru.commands;
 import at.dietze.quadru.constants.ICommand;
 import at.dietze.quadru.constants.IStrings;
 import at.dietze.quadru.factories.PlayerRepository;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -30,8 +31,15 @@ public class SetIslandCommand implements ICommand, CommandExecutor, IStrings {
                     String targetPlayerName = strings[0];
                     String islandName = strings[1];
                     if(islandName.equalsIgnoreCase("Pyroka") || islandName.equalsIgnoreCase("Aloria")) {
+                        Player toBeNicked = Bukkit.getPlayer(targetPlayerName);
+
+                        if(toBeNicked == null) {
+                            p.sendMessage(prefix + "§cDer Spieler §e" + targetPlayerName + " §cwurde nicht gefunden.");
+                            return false;
+                        }
+
                         PlayerRepository playerRepository = new PlayerRepository();
-                        playerRepository.setPlayerIsland(p, islandName);
+                        playerRepository.setPlayerIsland(toBeNicked, islandName);
 
                         p.sendMessage(prefix + "§aDie Insel von §e" + targetPlayerName + " §awurde zu §e" + islandName + " §ageändert.");
                     } else {

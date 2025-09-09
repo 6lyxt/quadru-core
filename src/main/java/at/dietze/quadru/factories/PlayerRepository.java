@@ -48,12 +48,12 @@ public class PlayerRepository {
     }
 
     public void setPlayerIsland(Player p, String islandName) {
-        UUID playerUUID = p.getUniqueId();
         String sql = "UPDATE players SET island = ? WHERE uuid = ?;";
         try (Connection connection = DBConnector.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, islandName.toLowerCase());
-            ps.setString(2, playerUUID.toString());
+            ps.setString(2, p.getUniqueId().toString());
+            System.out.println("Setting island of player " + p.getUniqueId() + " to " + islandName.toLowerCase());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -67,7 +67,11 @@ public class PlayerRepository {
             ps.setString(1, p.getUniqueId().toString());
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getString("island");
+                    if (rs.getString("island") != null) {
+                        return rs.getString("island");
+                    } else {
+                        return "OBDACHLOS";
+                    }
                 }
             }
         } catch (SQLException e) {
