@@ -56,6 +56,8 @@ public class SitCommand implements ICommand, CommandExecutor, IStrings {
 
         Entity arrow = p.getWorld().spawnEntity(p.getLocation().subtract(0D, 0.4D, 0D), EntityType.ARROW);
         arrow.setGravity(false);
+        arrow.setPersistent(true);
+        arrow.setSilent(true);
         arrow.addPassenger(p);
         p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(prefix + "§aUm aufzustehen, drücke SHIFT."));
 
