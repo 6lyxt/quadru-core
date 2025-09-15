@@ -60,6 +60,5 @@ public class SitCommand implements ICommand, CommandExecutor, IStrings {
         arrow.setSilent(true);
         arrow.addPassenger(p);
         p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(prefix + "§aUm aufzustehen, drücke SHIFT."));
-
     }
 }

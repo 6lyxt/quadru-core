@@ -26,6 +26,10 @@ public class PlayerSitOnStairs implements Listener {
         if (p.getInventory().getItemInMainHand().getType() != Material.AIR) return;
 
         Block block = e.getClickedBlock();
+
+        Block aboveBlock = block.getRelative(BlockFace.UP);
+        if (!aboveBlock.isEmpty()) return;
+
         BlockData blockData = block.getBlockData();
 
         if (!(blockData instanceof Stairs)) return;
