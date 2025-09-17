@@ -20,21 +20,32 @@ import org.bukkit.inventory.ItemStack;
 
 public class OnPlayerDeathEvent implements Listener {
 
-    private org.bukkit.block.data.type.Chest TypeChest;
-
-
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
         Player p = e.getPlayer();
         e.setDeathMessage(IStrings.prefix + "§c" + p.getCustomName() + " §cist gestorben.");
+        e.getDrops().clear();
 
+        this.spawnDeathChest(p);
+
+        p.getInventory().clear();
+    }
+
+    private void spawnDeathChest(Player p) {
         Location deathLocation = p.getLocation().toBlockLocation();
         Location chestLocation1 = deathLocation.clone();
-        Location chestLocation2 = deathLocation.clone().add(0, 0, 1);
 
-        while (!chestLocation1.getBlock().isEmpty() || !chestLocation2.getBlock().isEmpty()) {
+        while (!chestLocation1.getBlock().isEmpty()) {
             chestLocation1.add(0, 1, 0);
-            chestLocation2.add(0, 1, 0);
+        }
+        Location chestLocation2 = chestLocation1.clone().add(1, 0, 0);
+
+        // i wanted to originally check around the player but that resulted in in facing issues for some reason
+        if (!chestLocation2.getBlock().isEmpty()) {
+            while (!chestLocation2.getBlock().isEmpty()) {
+                chestLocation1.add(0, 1, 0);
+                chestLocation2.add(0, 1, 0);
+            }
         }
 
         Block chest1Block = chestLocation1.getBlock();
@@ -46,12 +57,13 @@ public class OnPlayerDeathEvent implements Listener {
         BlockData data1 = chest1Block.getBlockData();
         BlockData data2 = chest2Block.getBlockData();
 
-        if (data1 instanceof Chest && data2 instanceof Chest) {
-            org.bukkit.block.data.type.Chest chestData1 = (org.bukkit.block.data.type.Chest) data1;
-            org.bukkit.block.data.type.Chest chestData2 = (org.bukkit.block.data.type.Chest) data2;
+        // since someone (who should be shot btw) randomly decided to name the type Chest and the Block Chest the same,
+        // we need to fully import the types name, since java doesnt have named import (kotlin, scala etc have them tho) (i want to die)
 
-            chestData1.setType(org.bukkit.block.data.type.Chest.Type.LEFT);
-            chestData2.setType(org.bukkit.block.data.type.Chest.Type.RIGHT);
+        if (data1 instanceof org.bukkit.block.data.type.Chest chestData1 && data2 instanceof org.bukkit.block.data.type.Chest chestData2) {
+            chestData1.setType(org.bukkit.block.data.type.Chest.Type.RIGHT);
+            chestData2.setType(org.bukkit.block.data.type.Chest.Type.LEFT);
+
             chestData1.setFacing(BlockFace.SOUTH);
             chestData2.setFacing(BlockFace.SOUTH);
 
@@ -59,9 +71,8 @@ public class OnPlayerDeathEvent implements Listener {
             chest2Block.setBlockData(chestData2);
 
             BlockState chestState = chest1Block.getState();
-
             if (chestState instanceof org.bukkit.block.Chest) {
-                org.bukkit.block.Chest chest = (Chest) chestState;
+                org.bukkit.block.Chest chest = (org.bukkit.block.Chest) chestState;
                 Inventory doubleChestInventory = chest.getInventory();
 
                 chest.setCustomName("Grab von " + p.getCustomName());
@@ -81,10 +92,6 @@ public class OnPlayerDeathEvent implements Listener {
                     }
                 }
             }
-
-            p.getInventory().clear();
-            e.getDrops().clear();
         }
-
     }
 }
