@@ -25,10 +25,15 @@ public class OnPlayerDeathEvent implements Listener {
         Player p = e.getPlayer();
         e.setDeathMessage(IStrings.prefix + "§c" + p.getCustomName() + " §cist gestorben.");
         e.getDrops().clear();
-
-        this.spawnDeathChest(p);
-
-        p.getInventory().clear();
+        try {
+            this.spawnDeathChest(p);
+            p.sendMessage(IStrings.prefix + "§aDeine Todeskiste befindet sich hier: §7" + p.getLocation().getBlockX() + "§8/§7" + p.getLocation().getBlockY() + "§8/§7" + p.getLocation().getBlockZ() + " §ain Welt: §7" + p.getWorld().getName());
+            p.getInventory().clear();
+        } catch (Exception ex) {
+            p.sendMessage(IStrings.prefix + "§cFehler beim Erstellen der Todestruhe, bitte kontaktiere einen Staff.");
+            Bukkit.getConsoleSender().sendMessage(IStrings.prefix + "§cFehler beim Erstellen der Todestruhe für " + p.getCustomName() + ": " + ex.getMessage());
+            return;
+        }
     }
 
     private void spawnDeathChest(Player p) {
@@ -79,14 +84,8 @@ public class OnPlayerDeathEvent implements Listener {
                 chest.update();
 
                 ItemStack[] playerContents = p.getInventory().getContents();
-                ItemStack[] armorContents = p.getInventory().getArmorContents();
 
                 for (ItemStack item : playerContents) {
-                    if (item != null) {
-                        doubleChestInventory.addItem(item);
-                    }
-                }
-                for (ItemStack item : armorContents) {
                     if (item != null) {
                         doubleChestInventory.addItem(item);
                     }
