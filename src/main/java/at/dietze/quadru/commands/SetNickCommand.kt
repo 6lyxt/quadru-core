@@ -1,50 +1,45 @@
-package at.dietze.quadru.commands;
+package at.dietze.quadru.commands
 
-import at.dietze.quadru.constants.ICommand;
-import at.dietze.quadru.constants.IStrings;
-import at.dietze.quadru.factories.NickRepository;
-import at.dietze.quadru.factories.PlayerNameFormatter;
-import at.dietze.quadru.factories.PlayerRepository;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import at.dietze.quadru.constants.ICommand
+import at.dietze.quadru.constants.IStrings
+import at.dietze.quadru.factories.NickRepository
+import at.dietze.quadru.factories.PlayerNameFormatter.format
+import at.dietze.quadru.factories.PlayerRepository
+import org.bukkit.command.Command
+import org.bukkit.command.CommandExecutor
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
+import java.util.*
 
-public class SetNickCommand implements ICommand, IStrings, CommandExecutor {
-    @Override
-    public String getAction() {
-        return "setNick";
-    }
+class SetNickCommand : ICommand, IStrings, CommandExecutor {
+    override val action: String
+        get() = "setNick"
 
-    @Override
-    public String getDescription() {
-        return "Setzt deinen Nicknamen.";
-    }
+    override val description: String
+        get() = "Setzt deinen Nicknamen."
 
-    @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] strings) {
-        Player p = (Player) commandSender;
+    override fun onCommand(commandSender: CommandSender, command: Command, s: String, strings: Array<String>): Boolean {
+        val p = commandSender as Player
 
-        if(command.getName().equalsIgnoreCase(this.getAction())) {
-            if(strings.length > 0) {
-                String newNick = strings[0];
-                PlayerRepository playerRepository = new PlayerRepository();
-                String islandName = playerRepository.fetchPlayerIsland(p).toUpperCase();
-                NickRepository nickRepository = new NickRepository();
-                nickRepository.upsertNick(p, newNick);
+        if (command.name.equals(this.action, ignoreCase = true)) {
+            if (strings.size > 0) {
+                var newNick = strings[0]
+                val playerRepository = PlayerRepository()
+                val islandName = playerRepository.fetchPlayerIsland(p).uppercase(Locale.getDefault())
+                val nickRepository = NickRepository()
+                nickRepository.upsertNick(p, newNick)
 
-                newNick = PlayerNameFormatter.format(newNick, islandName);
-                p.setDisplayName(newNick);
-                p.setCustomName(newNick);
-                p.setPlayerListName(newNick);
+                newNick = format(newNick, islandName)
+                p.displayName = newNick
+                p.customName = newNick
+                p.playerListName = newNick
 
-                p.sendMessage(prefix + "§aDein Nickname wurde zu §e" + newNick + " §ageändert. Wir empfehlen, einmal neuzujoinen, damit der Nickname überall übernommen wird.");
+                p.sendMessage(IStrings.prefix + "§aDein Nickname wurde zu §e" + newNick + " §ageändert. Wir empfehlen, einmal neuzujoinen, damit der Nickname überall übernommen wird.")
             } else {
-                p.sendMessage(prefix + "§cBitte gib einen Nicknamen an.");
+                p.sendMessage(IStrings.prefix + "§cBitte gib einen Nicknamen an.")
             }
         }
 
-        return true;
+        return true
     }
 }

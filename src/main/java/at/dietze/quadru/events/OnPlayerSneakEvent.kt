@@ -1,28 +1,27 @@
-package at.dietze.quadru.events;
+package at.dietze.quadru.events
 
-import org.bukkit.Location;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.Location
+import org.bukkit.entity.Arrow
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerToggleSneakEvent
 
 /**
  *
  */
-public class OnPlayerSneakEvent implements Listener {
-
+class OnPlayerSneakEvent : Listener {
     /**
      * @param e Event
      */
     @EventHandler
-    public void onSneak(PlayerToggleSneakEvent e) {
-        Player p = e.getPlayer();
+    fun onSneak(e: PlayerToggleSneakEvent) {
+        val p = e.player
 
-        if(p.getVehicle() instanceof Arrow) {
-            p.getVehicle().remove();
-            Location loc = new Location(p.getWorld(), p.getLocation().getX(), p.getLocation().getY() + 0.4D, p.getLocation().getZ(), p.getLocation().getYaw(), p.getLocation().getPitch());
-            p.teleport(loc);
+        if (p.vehicle is Arrow) {
+            (p.vehicle as Arrow).remove()
+            val loc =
+                Location(p.world, p.location.x, p.location.y + 0.4, p.location.z, p.location.yaw, p.location.pitch)
+            p.teleport(loc)
         }
     }
 }

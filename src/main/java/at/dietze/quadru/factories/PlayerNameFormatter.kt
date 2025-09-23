@@ -1,21 +1,18 @@
-package at.dietze.quadru.factories;
+package at.dietze.quadru.factories
 
-public class PlayerNameFormatter {
-
-    public static String format(String playerName, String islandName) {
+object PlayerNameFormatter {
+    @JvmStatic
+    fun format(playerName: String, islandName: String?): String {
+        var islandName = islandName
         if (islandName == null || islandName.isEmpty()) {
-            islandName = "OBDACHLOS";
+            islandName = "OBDACHLOS"
         }
 
-        switch (islandName) {
-            case "aloria":
-                islandName = "§9ALORIA";
-                break;
-            case "pyroka":
-                islandName = "§6PYROKA";
-                break;
+        when (islandName) {
+            "aloria" -> islandName = "§9ALORIA"
+            "pyroka" -> islandName = "§6PYROKA"
         }
 
-        return "§8(§7" + islandName + "§8)" + " §7" + playerName + "§r";
+        return "§8(§7$islandName§8) §7$playerName§r"
     }
 }

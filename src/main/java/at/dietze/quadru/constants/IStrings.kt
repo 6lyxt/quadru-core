@@ -1,6 +1,7 @@
-package at.dietze.quadru.constants;
+package at.dietze.quadru.constants
 
-public interface IStrings {
-
-    String prefix = "§8[§aQuadru§8] §7| §r";
+interface IStrings {
+    companion object {
+        const val prefix: String = "§8[§aQuadru§8] §7| §r"
+    }
 }

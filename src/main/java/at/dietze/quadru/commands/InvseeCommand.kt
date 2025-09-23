@@ -1,52 +1,45 @@
-package at.dietze.quadru.commands;
+package at.dietze.quadru.commands
 
-import at.dietze.quadru.QuadruCore;
-import at.dietze.quadru.constants.ICommand;
-import at.dietze.quadru.constants.IStrings;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.jetbrains.annotations.NotNull;
+import at.dietze.quadru.QuadruCore
+import at.dietze.quadru.constants.ICommand
+import at.dietze.quadru.constants.IStrings
+import org.bukkit.Bukkit
+import org.bukkit.command.Command
+import org.bukkit.command.CommandExecutor
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
+import org.bukkit.inventory.Inventory
 
-public class InvseeCommand implements ICommand, CommandExecutor, IStrings {
-
-    public InvseeCommand() {
-        QuadruCore.addToDescriptions(this.getAction(), this.getDescription());
+class InvseeCommand : ICommand, CommandExecutor, IStrings {
+    init {
+        QuadruCore.addToDescriptions(this.action, this.description)
     }
 
-    @Override
-    public String getAction() {
-        return "invsee";
-    }
+    override val action: String
+        get() = "invsee"
 
-    @Override
-    public String getDescription() {
-        return "Öffnet das Inventar eines anderen Spielers.";
-    }
+    override val description: String
+        get() = "Öffnet das Inventar eines anderen Spielers."
 
-    @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] strings) {
-        Player p = (Player) commandSender;
+    override fun onCommand(commandSender: CommandSender, command: Command, s: String, strings: Array<String>): Boolean {
+        val p = commandSender as Player
 
-        if (command.getName().equalsIgnoreCase(this.getAction())) {
+        if (command.name.equals(this.action, ignoreCase = true)) {
             if (p.hasPermission("core.admin")) {
-                if (strings.length > 0) {
-                    Player invPlayer = Bukkit.getPlayer(strings[0]);
+                if (strings.size > 0) {
+                    val invPlayer = Bukkit.getPlayer(strings[0])
                     if (invPlayer != null) {
-                        Inventory inv = invPlayer.getInventory();
-                        p.openInventory(inv);
+                        val inv: Inventory = invPlayer.inventory
+                        p.openInventory(inv)
                     } else {
-                        p.sendMessage(prefix + "§cDieser Spieler wurde leider nicht gefunden.");
+                        p.sendMessage(IStrings.prefix + "§cDieser Spieler wurde leider nicht gefunden.")
                     }
                 }
             } else {
-                p.sendMessage(prefix + "§cDu hast keine Rechte, um diesen Befehl auszuführen.");
+                p.sendMessage(IStrings.prefix + "§cDu hast keine Rechte, um diesen Befehl auszuführen.")
             }
         }
 
-        return true;
+        return true
     }
 }

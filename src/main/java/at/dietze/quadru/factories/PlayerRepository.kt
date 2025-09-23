@@ -1,27 +1,25 @@
-package at.dietze.quadru.factories;
+package at.dietze.quadru.factories
 
-import at.dietze.quadru.db.DBConnector;
-import org.bukkit.entity.Player;
+import at.dietze.quadru.db.DBConnector
+import org.bukkit.entity.Player
+import java.sql.SQLException
+import java.util.*
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.UUID;
-
-public class PlayerRepository {
-
+class PlayerRepository {
     /**
      * @param p player
      */
-    public void upsertPlayer(Player p) {
-        String sql = "INSERT IGNORE INTO players (uuid) VALUES (?);";
-        try (Connection connection = DBConnector.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, p.getUniqueId().toString());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+    fun upsertPlayer(p: Player) {
+        val sql = "INSERT IGNORE INTO players (uuid) VALUES (?);"
+        try {
+            DBConnector.getConnection().use { connection ->
+                connection.prepareStatement(sql).use { ps ->
+                    ps.setString(1, p.uniqueId.toString())
+                    ps.executeUpdate()
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
         }
     }
 
@@ -29,55 +27,66 @@ public class PlayerRepository {
      * @param p player
      * @return dbplayer
      */
-    public boolean playerExists(Player p) {
-        String sql = "SELECT * FROM players WHERE uuid = ?;";
-        try (Connection connection = DBConnector.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, p.getUniqueId().toString());
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return true;
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public void setPlayerIsland(Player p, String islandName) {
-        String sql = "UPDATE players SET island = ? WHERE uuid = ?;";
-        try (Connection connection = DBConnector.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, islandName.toLowerCase());
-            ps.setString(2, p.getUniqueId().toString());
-            System.out.println("Setting island of player " + p.getUniqueId() + " to " + islandName.toLowerCase());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public String fetchPlayerIsland(Player p) {
-        String sql = "SELECT island FROM players WHERE uuid = ?;";
-        try (Connection connection = DBConnector.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, p.getUniqueId().toString());
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    if (rs.getString("island") != null) {
-                        return rs.getString("island");
-                    } else {
-                        return "OBDACHLOS";
+    fun playerExists(p: Player): Boolean {
+        val sql = "SELECT * FROM players WHERE uuid = ?;"
+        try {
+            DBConnector.getConnection().use { connection ->
+                connection.prepareStatement(sql).use { ps ->
+                    ps.setString(1, p.uniqueId.toString())
+                    try {
+                        ps.executeQuery().use { rs ->
+                            if (rs.next()) {
+                                return true
+                            }
+                        }
+                    } catch (e: SQLException) {
+                        throw RuntimeException(e)
                     }
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+        return false
+    }
+
+    fun setPlayerIsland(p: Player, islandName: String) {
+        val sql = "UPDATE players SET island = ? WHERE uuid = ?;"
+        try {
+            DBConnector.getConnection().use { connection ->
+                connection.prepareStatement(sql).use { ps ->
+                    ps.setString(1, islandName.lowercase(Locale.getDefault()))
+                    ps.setString(2, p.uniqueId.toString())
+                    println("Setting island of player " + p.uniqueId + " to " + islandName.lowercase(Locale.getDefault()))
+                    ps.executeUpdate()
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+    }
+
+    fun fetchPlayerIsland(p: Player): String {
+        val sql = "SELECT island FROM players WHERE uuid = ?;"
+        try {
+            DBConnector.getConnection().use { connection ->
+                connection.prepareStatement(sql).use { ps ->
+                    ps.setString(1, p.uniqueId.toString())
+                    ps.executeQuery().use { rs ->
+                        if (rs.next()) {
+                            return if (rs.getString("island") != null) {
+                                rs.getString("island")
+                            } else {
+                                "OBDACHLOS"
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
         }
 
-        return "OBDACHLOS";
+        return "OBDACHLOS"
     }
 }

@@ -1,39 +1,37 @@
-package at.dietze.quadru.commands;
+package at.dietze.quadru.commands
 
-import at.dietze.quadru.QuadruCore;
-import at.dietze.quadru.constants.ICommand;
-import at.dietze.quadru.constants.IStrings;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import at.dietze.quadru.QuadruCore
+import at.dietze.quadru.constants.ICommand
+import at.dietze.quadru.constants.IStrings
+import org.bukkit.command.Command
+import org.bukkit.command.CommandExecutor
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
+import java.util.function.Consumer
 
-public class HelpCommand implements ICommand, IStrings, CommandExecutor {
-
-    public HelpCommand() {
-        QuadruCore.addToDescriptions(this.getAction(), this.getDescription());
+class HelpCommand : ICommand, IStrings, CommandExecutor {
+    init {
+        QuadruCore.addToDescriptions(this.action, this.description)
     }
 
-    @Override
-    public String getAction() {
-        return "help";
-    }
+    override val action: String
+        get() = "help"
 
-    @Override
-    public String getDescription() {
-        return "Zeigt diesen Help-Command an.";
-    }
+    override val description: String
+        get() = "Zeigt diesen Help-Command an."
 
-    @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] strings) {
-        Player p = (Player) commandSender;
+    override fun onCommand(commandSender: CommandSender, command: Command, s: String, strings: Array<String>): Boolean {
+        val p = commandSender as Player
 
-        if (command.getName().equalsIgnoreCase(this.getAction())) {
-            p.sendMessage(prefix + "§6§lHilfe Menü");
-            QuadruCore.getDescriptions().forEach(p::sendMessage);
+        if (command.name.equals(this.action, ignoreCase = true)) {
+            p.sendMessage(IStrings.prefix + "§6§lHilfe Menü")
+            QuadruCore.descriptions.forEach(Consumer { s: String? ->
+                p.sendMessage(
+                    s!!
+                )
+            })
         }
 
-        return true;
+        return true
     }
 }

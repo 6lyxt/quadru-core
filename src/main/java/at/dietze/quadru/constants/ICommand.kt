@@ -1,7 +1,6 @@
-package at.dietze.quadru.constants;
+package at.dietze.quadru.constants
 
-public interface ICommand {
-
-    String getAction();
-    String getDescription();
+interface ICommand {
+    val action: String?
+    val description: String?
 }

@@ -1,53 +1,22 @@
-package at.dietze.quadru.db;
+package at.dietze.quadru.db
 
-import at.dietze.quadru.QuadruCore;
-import io.github.cdimascio.dotenv.Dotenv;
+import at.dietze.quadru.QuadruCore
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.SQLException
 
-import java.sql.*;
+class DBConnector private constructor() {
+    val dbUrl: String? = QuadruCore.plugin.config.getString("DB_URL")
+    val dbUser: String? = QuadruCore.plugin.config.getString("DB_USER")
+    val dbPass: String? = QuadruCore.plugin.config.getString("DB_PASSWORD")
 
-public class DBConnector {
-    private static final DBConnector INSTANCE = new DBConnector();
-    private final String dbUrl;
-    private final String dbUser;
-    private final String dbPass;
-
-    private DBConnector() {
-
-        this.dbUrl = QuadruCore.getPlugin().getConfig().getString("DB_URL");
-        this.dbUser = QuadruCore.getPlugin().getConfig().getString("DB_USER");
-        this.dbPass = QuadruCore.getPlugin().getConfig().getString("DB_PASSWORD");
+    init {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            System.err.println("JDBC Driver not found: " + e.getMessage());
-            throw new RuntimeException("Failed to load JDBC driver.", e);
+            Class.forName("com.mysql.cj.jdbc.Driver")
+        } catch (e: ClassNotFoundException) {
+            System.err.println("JDBC Driver not found: " + e.message)
+            throw RuntimeException("Failed to load JDBC driver.", e)
         }
-    }
-
-    public static DBConnector getInstance() {
-        return INSTANCE;
-    }
-
-    public String getDbUrl() {
-        return dbUrl;
-    }
-
-    public String getDbUser() {
-        return dbUser;
-    }
-
-    public String getDbPass() {
-        return dbPass;
-    }
-
-    /**
-     * establishes a new database connection
-     *
-     * @return Connection
-     * @throws SQLException if connection fails
-     */
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(getInstance().getDbUrl(), getInstance().getDbUser(), getInstance().getDbPass());
     }
 
     /**
@@ -55,12 +24,33 @@ public class DBConnector {
      *
      * @param query raw sql query
      */
-    public void raw(String query) {
-        try (Connection connection = getConnection();
-             Statement statement = connection.createStatement()) {
-            statement.execute(query);
-        } catch (SQLException e) {
-            System.err.println("Raw query failed: " + e.getMessage());
+    fun raw(query: String?) {
+        try {
+            connection.use { connection ->
+                connection.createStatement().use { statement ->
+                    statement.execute(query)
+                }
+            }
+        } catch (e: SQLException) {
+            System.err.println("Raw query failed: " + e.message)
         }
+    }
+
+    companion object {
+        val instance: DBConnector = DBConnector()
+
+        @get:Throws(SQLException::class)
+        val connection: Connection
+            /**
+             * establishes a new database connection
+             *
+             * @return Connection
+             * @throws SQLException if connection fails
+             */
+            get() = DriverManager.getConnection(
+                instance.dbUrl,
+                instance.dbUser,
+                instance.dbPass
+            )
     }
 }

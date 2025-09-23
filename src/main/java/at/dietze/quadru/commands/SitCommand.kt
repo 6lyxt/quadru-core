@@ -1,64 +1,60 @@
-package at.dietze.quadru.commands;
+package at.dietze.quadru.commands
 
-import at.dietze.quadru.QuadruCore;
-import at.dietze.quadru.constants.ICommand;
-import at.dietze.quadru.constants.IStrings;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import at.dietze.quadru.QuadruCore
+import at.dietze.quadru.constants.ICommand
+import at.dietze.quadru.constants.IStrings
+import net.md_5.bungee.api.ChatMessageType
+import net.md_5.bungee.api.chat.TextComponent
+import org.bukkit.command.Command
+import org.bukkit.command.CommandExecutor
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.EntityType
+import org.bukkit.entity.Player
 
-public class SitCommand implements ICommand, CommandExecutor, IStrings {
-
-    public SitCommand() {
-        QuadruCore.addToDescriptions(this.getAction(), this.getDescription());
+class SitCommand : ICommand, CommandExecutor, IStrings {
+    init {
+        QuadruCore.addToDescriptions(this.action, this.description)
     }
 
-    @Override
-    public String getAction() {
-        return "sit";
-    }
+    override val action: String
+        get() = "sit"
 
-    @Override
-    public String getDescription() {
-        return "sitz wie hund wuff wuff";
-    }
+    override val description: String
+        get() = "sitz wie hund wuff wuff"
 
-    @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] strings) {
-        Player p = (Player) commandSender;
+    override fun onCommand(commandSender: CommandSender, command: Command, s: String, strings: Array<String>): Boolean {
+        val p = commandSender as Player
 
-        if(command.getName().equalsIgnoreCase(this.getAction())) {
-            this.spawnHelperEntity(p);
+        if (command.name.equals(this.action, ignoreCase = true)) {
+            this.spawnHelperEntity(p)
         }
 
-        return true;
+        return true
     }
 
     /**
      * @param p Player
      */
-    private void spawnHelperEntity(Player p) {
-        if(p.isInsideVehicle()) {
-            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(prefix + "§cDu sitzt bereits!"));
-            return;
+    private fun spawnHelperEntity(p: Player) {
+        if (p.isInsideVehicle) {
+            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent(IStrings.prefix + "§cDu sitzt bereits!"))
+            return
         }
 
-        if(!p.isOnGround()) {
-            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(prefix + "§cDu musst stehen, um zu sitzen!"));
-            return;
+        if (!p.isOnGround) {
+            p.spigot().sendMessage(
+                ChatMessageType.ACTION_BAR,
+                TextComponent(IStrings.prefix + "§cDu musst stehen, um zu sitzen!")
+            )
+            return
         }
 
-        Entity arrow = p.getWorld().spawnEntity(p.getLocation().subtract(0D, 0.4D, 0D), EntityType.ARROW);
-        arrow.setGravity(false);
-        arrow.setPersistent(true);
-        arrow.setSilent(true);
-        arrow.addPassenger(p);
-        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(prefix + "§aUm aufzustehen, drücke SHIFT."));
+        val arrow = p.world.spawnEntity(p.location.subtract(0.0, 0.4, 0.0), EntityType.ARROW)
+        arrow.setGravity(false)
+        arrow.isPersistent = true
+        arrow.isSilent = true
+        arrow.addPassenger(p)
+        p.spigot()
+            .sendMessage(ChatMessageType.ACTION_BAR, TextComponent(IStrings.prefix + "§aUm aufzustehen, drücke SHIFT."))
     }
 }

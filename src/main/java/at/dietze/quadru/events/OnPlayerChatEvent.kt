@@ -1,41 +1,48 @@
-package at.dietze.quadru.events;
+package at.dietze.quadru.events
 
-import at.dietze.quadru.constants.IStrings;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import at.dietze.quadru.constants.IStrings
+import org.bukkit.Bukkit
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.player.AsyncPlayerChatEvent
+import java.util.*
 
-import java.util.Objects;
-
-public class OnPlayerChatEvent implements Listener, IStrings {
-
+class OnPlayerChatEvent : Listener, IStrings {
     /**
      * @param e AsyncPlayerChatEvent
      */
     @EventHandler
-    public void onPlayerChat(AsyncPlayerChatEvent e) {
-        String rawMsg = e.getMessage();
-        String msg = prefix + "§7[privat] <§a" + e.getPlayer().getCustomName() + "§7> " + rawMsg;
+    fun onPlayerChat(e: AsyncPlayerChatEvent) {
+        val rawMsg = e.message
+        val msg = IStrings.prefix + "§7[privat] <§a" + e.player.customName + "§7> " + rawMsg
 
-        int dst = 100;
+        val dst = 100
 
-        Location playerLoc = e.getPlayer().getLocation();
+        val playerLoc = e.player.location
 
-        for (Player pl : Objects.requireNonNull(Bukkit.getServer().getWorld(e.getPlayer().getWorld().getUID())).getPlayers()) {
-            if (pl.getLocation().distanceSquared(playerLoc) <= dst && !rawMsg.toLowerCase().startsWith("@all")) {
-                pl.sendMessage(msg);
-                Bukkit.getConsoleSender().sendMessage(msg);
-            } else if(rawMsg.toLowerCase().startsWith("@all")) {
-                Bukkit.getConsoleSender().sendMessage(prefix + "§7[alle] <§a" + e.getPlayer().getCustomName() + "§7>" + rawMsg.replace("@all", ""));
-                Bukkit.broadcastMessage(prefix + "§7[alle] <§a" + e.getPlayer().getCustomName() + "§7>" + rawMsg.replace("@all", ""));
-                break;
+        for (pl in Objects.requireNonNull(Bukkit.getServer().getWorld(e.player.world.uid)).players) {
+            if (pl.location.distanceSquared(playerLoc) <= dst && !rawMsg.lowercase(Locale.getDefault())
+                    .startsWith("@all")
+            ) {
+                pl.sendMessage(msg)
+                Bukkit.getConsoleSender().sendMessage(msg)
+            } else if (rawMsg.lowercase(Locale.getDefault()).startsWith("@all")) {
+                Bukkit.getConsoleSender().sendMessage(
+                    IStrings.prefix + "§7[alle] <§a" + e.player.customName + "§7>" + rawMsg.replace(
+                        "@all",
+                        ""
+                    )
+                )
+                Bukkit.broadcastMessage(
+                    IStrings.prefix + "§7[alle] <§a" + e.player.customName + "§7>" + rawMsg.replace(
+                        "@all",
+                        ""
+                    )
+                )
+                break
             }
         }
 
-        e.setCancelled(true);
-
+        e.isCancelled = true
     }
 }

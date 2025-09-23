@@ -1,68 +1,67 @@
-package at.dietze.quadru.events;
+package at.dietze.quadru.events
 
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.type.Stairs;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.Material
+import org.bukkit.block.BlockFace
+import org.bukkit.block.data.type.Stairs
+import org.bukkit.entity.EntityType
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.block.Action
+import org.bukkit.event.player.PlayerInteractEvent
 
-public class PlayerSitOnStairs implements Listener {
-
+class PlayerSitOnStairs : Listener {
     @EventHandler
-    public void playerSitOnStairs(PlayerInteractEvent e) {
-        if (e.getClickedBlock() == null) return;
-        if (e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-        Player p = e.getPlayer();
+    fun playerSitOnStairs(e: PlayerInteractEvent) {
+        if (e.clickedBlock == null) return
+        if (e.action != Action.RIGHT_CLICK_BLOCK) return
+        val p = e.player
 
-        if (p.isSneaking()) return;
-        if (p.getInventory().getItemInMainHand().getType() != Material.AIR) return;
+        if (p.isSneaking) return
+        if (p.inventory.itemInMainHand.type != Material.AIR) return
 
-        Block block = e.getClickedBlock();
+        val block = e.clickedBlock
 
-        Block aboveBlock = block.getRelative(BlockFace.UP);
-        if (!aboveBlock.isEmpty()) return;
+        val aboveBlock = block!!.getRelative(BlockFace.UP)
+        if (!aboveBlock.isEmpty) return
 
-        BlockData blockData = block.getBlockData();
+        val blockData = block.blockData as? Stairs ?: return
 
-        if (!(blockData instanceof Stairs)) return;
+        val stairs = blockData
+        if (stairs.shape != Stairs.Shape.STRAIGHT) return
 
-        Stairs stairs = (Stairs) blockData;
-        if (stairs.getShape() != Stairs.Shape.STRAIGHT) return;
+        val facing = stairs.facing
 
-        BlockFace facing = stairs.getFacing();
+        val spawnLocation = block.location.add(0.5, 0.25, 0.5)
 
-        Location spawnLocation = block.getLocation().add(0.5, 0.25, 0.5);
-
-        switch (facing) {
-            case NORTH:
-                spawnLocation.add(0, 0, 0.25);
-                break;
-            case SOUTH:
-                spawnLocation.add(0, 0, -0.25);
-                break;
-            case EAST:
-                spawnLocation.add(-0.25, 0, 0);
-                break;
-            case WEST:
-                spawnLocation.add(0.25, 0, 0);
-                break;
+        when (facing) {
+            BlockFace.NORTH -> spawnLocation.add(0.0, 0.0, 0.25)
+            BlockFace.SOUTH -> spawnLocation.add(0.0, 0.0, -0.25)
+            BlockFace.EAST -> spawnLocation.add(-0.25, 0.0, 0.0)
+            BlockFace.WEST -> spawnLocation.add(0.25, 0.0, 0.0)
+            BlockFace.UP -> TODO()
+            BlockFace.DOWN -> TODO()
+            BlockFace.NORTH_EAST -> TODO()
+            BlockFace.NORTH_WEST -> TODO()
+            BlockFace.SOUTH_EAST -> TODO()
+            BlockFace.SOUTH_WEST -> TODO()
+            BlockFace.WEST_NORTH_WEST -> TODO()
+            BlockFace.NORTH_NORTH_WEST -> TODO()
+            BlockFace.NORTH_NORTH_EAST -> TODO()
+            BlockFace.EAST_NORTH_EAST -> TODO()
+            BlockFace.EAST_SOUTH_EAST -> TODO()
+            BlockFace.SOUTH_SOUTH_EAST -> TODO()
+            BlockFace.SOUTH_SOUTH_WEST -> TODO()
+            BlockFace.WEST_SOUTH_WEST -> TODO()
+            BlockFace.SELF -> TODO()
         }
 
-        Entity seat = p.getWorld().spawnEntity(spawnLocation, EntityType.ARROW);
+        val seat = p.world.spawnEntity(spawnLocation, EntityType.ARROW)
 
-        seat.setGravity(false);
-        seat.setInvulnerable(true);
-        seat.setSilent(true);
-        seat.setPersistent(false);
+        seat.setGravity(false)
+        seat.isInvulnerable = true
+        seat.isSilent = true
+        seat.isPersistent = false
 
-        seat.addPassenger(p);
+        seat.addPassenger(p)
     }
 }
