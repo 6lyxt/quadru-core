@@ -3,6 +3,7 @@ package at.dietze.quadru.events
 import at.dietze.quadru.constants.IStrings
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.block.Chest as ChestBlock
 import org.bukkit.block.BlockFace
 import org.bukkit.block.data.type.Chest
 import org.bukkit.entity.Player
@@ -54,8 +55,6 @@ class OnPlayerDeathEvent : Listener {
         val data1 = chest1Block.blockData
         val data2 = chest2Block.blockData
 
-        // since someone (who should be shot btw) randomly decided to name the type Chest and the Block Chest the same,
-        // we need to fully import the types name, since java doesnt have named import (kotlin, scala etc have them tho) (i want to die)
         if (data1 is Chest && data2 is Chest) {
             data1.type = Chest.Type.RIGHT
             data2.type = Chest.Type.LEFT
@@ -67,7 +66,7 @@ class OnPlayerDeathEvent : Listener {
             chest2Block.blockData = data2
 
             val chestState = chest1Block.state
-            if (chestState is org.bukkit.block.Chest) {
+            if (chestState is ChestBlock) {
                 val chest = chestState
                 val doubleChestInventory = chest.inventory
 
