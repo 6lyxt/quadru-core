@@ -12,7 +12,7 @@ class PlayerRepository {
     fun upsertPlayer(p: Player) {
         val sql = "INSERT IGNORE INTO players (uuid) VALUES (?);"
         try {
-            DBConnector.getConnection().use { connection ->
+            DBConnector.connection.use { connection ->
                 connection.prepareStatement(sql).use { ps ->
                     ps.setString(1, p.uniqueId.toString())
                     ps.executeUpdate()
@@ -30,7 +30,7 @@ class PlayerRepository {
     fun playerExists(p: Player): Boolean {
         val sql = "SELECT * FROM players WHERE uuid = ?;"
         try {
-            DBConnector.getConnection().use { connection ->
+            DBConnector.connection.use { connection ->
                 connection.prepareStatement(sql).use { ps ->
                     ps.setString(1, p.uniqueId.toString())
                     try {
@@ -53,7 +53,7 @@ class PlayerRepository {
     fun setPlayerIsland(p: Player, islandName: String) {
         val sql = "UPDATE players SET island = ? WHERE uuid = ?;"
         try {
-            DBConnector.getConnection().use { connection ->
+            DBConnector.connection.use { connection ->
                 connection.prepareStatement(sql).use { ps ->
                     ps.setString(1, islandName.lowercase(Locale.getDefault()))
                     ps.setString(2, p.uniqueId.toString())
@@ -69,7 +69,7 @@ class PlayerRepository {
     fun fetchPlayerIsland(p: Player): String {
         val sql = "SELECT island FROM players WHERE uuid = ?;"
         try {
-            DBConnector.getConnection().use { connection ->
+            DBConnector.connection.use { connection ->
                 connection.prepareStatement(sql).use { ps ->
                     ps.setString(1, p.uniqueId.toString())
                     ps.executeQuery().use { rs ->

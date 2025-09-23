@@ -12,7 +12,7 @@ class NickRepository {
     fun upsertNick(p: Player, nick: String?) {
         val sql = "INSERT INTO players (uuid, nick) VALUES (?, ?) ON DUPLICATE KEY UPDATE nick = VALUES(nick);"
         try {
-            DBConnector.getConnection().use { connection ->
+            DBConnector.connection.use { connection ->
                 connection.prepareStatement(sql).use { ps ->
                     ps.setString(1, p.uniqueId.toString())
                     ps.setString(2, nick)
@@ -31,7 +31,7 @@ class NickRepository {
     fun fetchNick(p: Player): String? {
         val sql = "SELECT nick FROM players WHERE uuid = ?;"
         try {
-            DBConnector.getConnection().use { connection ->
+            DBConnector.connection.use { connection ->
                 connection.prepareStatement(sql).use { ps ->
                     ps.setString(1, p.uniqueId.toString())
                     ps.executeQuery().use { rs ->

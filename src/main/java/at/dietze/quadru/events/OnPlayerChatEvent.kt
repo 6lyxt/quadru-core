@@ -20,7 +20,7 @@ class OnPlayerChatEvent : Listener, IStrings {
 
         val playerLoc = e.player.location
 
-        for (pl in Objects.requireNonNull(Bukkit.getServer().getWorld(e.player.world.uid)).players) {
+        for (pl in (Bukkit.getServer().getWorld(e.player.world.uid))?.players!!) {
             if (pl.location.distanceSquared(playerLoc) <= dst && !rawMsg.lowercase(Locale.getDefault())
                     .startsWith("@all")
             ) {

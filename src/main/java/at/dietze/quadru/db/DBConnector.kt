@@ -6,9 +6,9 @@ import java.sql.DriverManager
 import java.sql.SQLException
 
 class DBConnector private constructor() {
-    val dbUrl: String? = QuadruCore.plugin.config.getString("DB_URL")
-    val dbUser: String? = QuadruCore.plugin.config.getString("DB_USER")
-    val dbPass: String? = QuadruCore.plugin.config.getString("DB_PASSWORD")
+    val dbUrl: String? = QuadruCore.plugin?.config?.getString("DB_URL")
+    val dbUser: String? = QuadruCore.plugin?.config?.getString("DB_USER")
+    val dbPass: String? = QuadruCore.plugin?.config?.getString("DB_PASSWORD")
 
     init {
         try {
